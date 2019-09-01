@@ -45,12 +45,20 @@ module.exports = bundle => {
     }
     const dest = path.resolve(pathOut)
 
+    const uglifyCode = (code) => {
+      const uglified = uglifyJS.minify(code);
+      if (uglified.error) {
+        throw Error(uglified.error)
+      }
+      return uglified.code
+    }
+    
     logger.log('🛠️  Workbox')
     config.importScripts.forEach(s => {
       readFile(path.resolve(s), (err, data) => {
         if (err) throw err
         if (bundle.options.minify) {
-          data = uglifyJS.minify(data).code
+          data = uglifyCode(data)
         }
         const impDest = path.resolve(pathOut, /[^\/]+$/.exec(s)[0])
         writeFileSync(impDest, data)
@@ -67,7 +75,7 @@ module.exports = bundle => {
       swString = swString.swString
       logger.success('Service worker generated')
       if (bundle.options.minify) {
-        swString = uglifyJS.minify(swString).code
+        swString = uglifyCode(swString)
         logger.success('Service worker minified')
       }
       writeFileSync(path.join(dest, 'sw.js'), swString)
