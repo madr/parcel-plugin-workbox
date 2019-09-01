@@ -82,9 +82,7 @@ module.exports = bundle => {
       if (!data.includes('serviceWorker.register')) {
         let swTag =`
         if ('serviceWorker' in navigator) {
-          window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/sw.js');
-          });
+          navigator.serviceWorker.register('./sw.js');
         }
       `
         if (bundle.options.minify) {
