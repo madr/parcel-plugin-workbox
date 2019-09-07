@@ -6,6 +6,9 @@ const uglifyJS = require('uglify-es')
 
 module.exports = bundle => {
   bundle.on('buildEnd', async () => {
+    // exit silently if in development env
+    if (process.env.NODE_ENV.match(/dev/)) { return }
+    
     // output path
     let pathOut = bundle.options.outDir
 
